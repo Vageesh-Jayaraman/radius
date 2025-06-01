@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -10,6 +11,8 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  LatLng? _currentLocation;
+
   final List<LatLng> _markerPoints = [
     LatLng(13.0827, 80.2707),
     LatLng(13.0604, 80.2496),
@@ -20,35 +23,81 @@ class _MapPageState extends State<MapPage> {
   double moveValue = 0;
 
   @override
+  void initState() {
+    super.initState();
+    _getUserLocation();
+  }
+
+  Future<void> _getUserLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return;
+    }
+
+    // Check permission
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return;
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      print("not enabled");
+      return;
+    }
+
+    // Get current position
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    setState(() {
+      _currentLocation = LatLng(position.latitude, position.longitude);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
           FlutterMap(
             options: MapOptions(
-              initialCenter: LatLng(13.0827, 80.2707),
+              initialCenter: _currentLocation ?? LatLng(13.0827, 80.2707),
               initialZoom: 13.5,
               interactionOptions: const InteractionOptions(),
             ),
             children: [
               TileLayer(
-                urlTemplate: 'https://tile.jawg.io/jawg-streets/{z}/{x}/{y}{r}.png?access-token=GsQVPAN5Bpmv3rwGFWpEKDjMp0OBtfSrxGFGtrZ5guA4DvlML0X2y0hTtOy12mYR',
+                urlTemplate:
+                'https://tile.jawg.io/jawg-streets/{z}/{x}/{y}{r}.png?access-token=GsQVPAN5Bpmv3rwGFWpEKDjMp0OBtfSrxGFGtrZ5guA4DvlML0X2y0hTtOy12mYR',
                 userAgentPackageName: 'com.example.app',
                 retinaMode: RetinaMode.isHighDensity(context),
                 minZoom: 0,
                 maxZoom: 22,
               ),
               MarkerLayer(
-                markers: _markerPoints
-                    .map(
-                      (point) => Marker(
-                    width: 36,
-                    height: 36,
-                    point: point,
-                    child: Icon(Icons.location_on, color: Colors.black, size: 32),
+                markers: [
+                  ..._markerPoints.map(
+                        (point) => Marker(
+                      width: 36,
+                      height: 36,
+                      point: point,
+                      child:
+                      Icon(Icons.location_on, color: Colors.black, size: 32),
+                    ),
                   ),
-                )
-                    .toList(),
+                  if (_currentLocation != null)
+                    Marker(
+                      width: 40,
+                      height: 40,
+                      point: _currentLocation!,
+                      child:
+                      Icon(Icons.my_location, color: Colors.blue, size: 36),
+                    ),
+                ],
               ),
             ],
           ),
@@ -60,7 +109,8 @@ class _MapPageState extends State<MapPage> {
               return Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                  borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16)),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black12,
@@ -71,12 +121,16 @@ class _MapPageState extends State<MapPage> {
                 ),
                 child: ListView(
                   controller: scrollController,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Public', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+                        const Text('Public',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black)),
                         Switch(
                           value: isPublic,
                           activeColor: Colors.white,
@@ -94,7 +148,10 @@ class _MapPageState extends State<MapPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Move ±30m', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+                        const Text('Move ±30m',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black)),
                         SizedBox(
                           width: 180,
                           child: SliderTheme(
@@ -104,7 +161,8 @@ class _MapPageState extends State<MapPage> {
                               thumbColor: Colors.white,
                               overlayColor: Colors.black12,
                               valueIndicatorColor: Colors.black,
-                              valueIndicatorTextStyle: const TextStyle(color: Colors.white),
+                              valueIndicatorTextStyle:
+                              const TextStyle(color: Colors.white),
                             ),
                             child: Slider(
                               min: -30,
@@ -126,7 +184,6 @@ class _MapPageState extends State<MapPage> {
               );
             },
           ),
-          // SOS Button always on top
           Positioned(
             right: 20,
             top: MediaQuery.of(context).size.height * 0.10,

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "562151750049",
+    "project_id": "radius-8b401",
+    "storage_bucket": "radius-8b401.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:562151750049:android:7180322b5e670115efb3e0",
+        "android_client_info": {
+          "package_name": "com.example.radius"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtrTfxNenOhmmC1qnJzelCj-YryOMcVNI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
