@@ -48,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (user != null) {
       await _showAlert("Login Success", "Welcome back, ${user.email}!");
+      print(authService.getUserProfile(user.uid));
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => MapPage()),
