@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:radius/pages/team_service.dart';
@@ -51,7 +50,7 @@ class _TeamPageState extends State<TeamPage> {
               Navigator.of(context).pop();
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => const MapPage()),
+                MaterialPageRoute(builder: (_) => MapPage(teamId: teamId)),
               );
             },
             child: const Text('Continue'),
@@ -80,15 +79,14 @@ class _TeamPageState extends State<TeamPage> {
     if (teamId.isEmpty) return;
 
     setState(() => _isJoiningTeam = true);
-    final joined = await _teamService.joinTeam(teamId);
+    final joinedTeamId = await _teamService.joinTeam(teamId);
     setState(() => _isJoiningTeam = false);
 
-    if (joined) {
+    if (joinedTeamId != null) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const MapPage()),
+        MaterialPageRoute(builder: (_) => MapPage(teamId: joinedTeamId)),
       );
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Joined team successfully')),
       );
@@ -98,7 +96,6 @@ class _TeamPageState extends State<TeamPage> {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

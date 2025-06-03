@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:radius/pages/team_page.dart';
 import 'auth_service.dart';
 import 'map_page.dart';
 
@@ -51,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
       print(authService.getUserProfile(user.uid));
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => MapPage()),
+        MaterialPageRoute(builder: (_) => TeamPage()),
       );
     } else {
       await _showAlert("Login Failed", "Invalid email or password.");

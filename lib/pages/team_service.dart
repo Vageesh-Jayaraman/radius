@@ -23,24 +23,24 @@ class TeamService {
     }
   }
 
-  Future<bool> joinTeam(String teamId) async {
+  Future<String?> joinTeam(String teamId) async {
     final uid = _auth.currentUser?.uid;
-    if (uid == null) return false;
+    if (uid == null) return null;
 
     try {
       final teamRef = _firestore.collection('teams').doc(teamId);
       final snapshot = await teamRef.get();
 
-      if (!snapshot.exists) return false;
+      if (!snapshot.exists) return null;
 
       await teamRef.update({
         'members': FieldValue.arrayUnion([uid])
       });
 
-      return true;
+      return teamId;
     } catch (e) {
       print('Join team error: $e');
-      return false;
+      return null;
     }
   }
 
