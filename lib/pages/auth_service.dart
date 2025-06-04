@@ -68,7 +68,6 @@ class FirebaseAuthService {
     return null;
   }
 
-
   // Sign out
   Future<void> signOut() async {
     try {
@@ -76,15 +75,6 @@ class FirebaseAuthService {
       currentUser.value = null;
     } catch (e) {
       print('Sign out error: $e');
-    }
-  }
-
-  // Reset password via email
-  Future<void> sendPasswordResetEmail(String email) async {
-    try {
-      await _auth.sendPasswordResetEmail(email: email);
-    } catch (e) {
-      print('Reset email error: $e');
     }
   }
 
@@ -109,23 +99,6 @@ class FirebaseAuthService {
       currentUser.value = null;
     } catch (e) {
       print('Delete account error: $e');
-    }
-  }
-
-  // Reset password using current password
-  Future<bool> resetPasswordWithCurrent(
-      String email, String currentPassword, String newPassword) async {
-    try {
-      final credential = EmailAuthProvider.credential(
-        email: email,
-        password: currentPassword,
-      );
-      await currentUser.value?.reauthenticateWithCredential(credential);
-      await currentUser.value?.updatePassword(newPassword);
-      return true;
-    } catch (e) {
-      print('Reset password error: $e');
-      return false;
     }
   }
 

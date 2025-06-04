@@ -13,13 +13,22 @@ class TeamService {
       final teamDoc = await _firestore.collection('teams').add({
         'createdAt': FieldValue.serverTimestamp(),
         'members': [uid],
-        'validUntil': DateTime.now().add(const Duration(days: 3)),
       });
 
       return teamDoc.id;
     } catch (e) {
       print('Create team error: $e');
       return null;
+    }
+  }
+
+  Future<bool> deleteTeam(String teamId) async {
+    try {
+      await _firestore.collection('teams').doc(teamId).delete();
+      return true;
+    } catch (e) {
+      print('Delete team error: $e');
+      return false;
     }
   }
 
@@ -54,5 +63,26 @@ class TeamService {
       print('Fetch team members error: $e');
     }
     return [];
+  }
+
+  Future<List<String>> getTeamsCreatedByUser() async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return [];
+
+    try {
+      final querySnapshot = await _firestore.collection('teams')
+          .where('members', arrayContains: uid)
+          .get();
+
+      final createdTeams = querySnapshot.docs.where((doc) {
+        final members = List<String>.from(doc['members'] ?? []);
+        return members.isNotEmpty && members.first == uid;
+      }).map((doc) => doc.id).toList();
+
+      return createdTeams;
+    } catch (e) {
+      print('Get teams created by user error: $e');
+      return [];
+    }
   }
 }
