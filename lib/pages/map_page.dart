@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -18,7 +17,6 @@ class _MapPageState extends State<MapPage> {
   final RealtimeDBService _realtimeDB = RealtimeDBService();
   late Stream<Map<String, dynamic>> _teamLocationsStream;
   LatLng? _currentLocation;
-  Position? _lastPosition;
   final List<Marker> _markers = [];
 
   @override
@@ -116,18 +114,10 @@ class _MapPageState extends State<MapPage> {
         children: [
           FloatingActionButton(
             heroTag: "exit_btn",
-            backgroundColor: Colors.grey.shade800,
+            backgroundColor: Colors.black,
             foregroundColor: Colors.white,
             onPressed: () => Navigator.pop(context),
             child: const Icon(Icons.exit_to_app, size: 28),
-          ),
-          const SizedBox(height: 12),
-          FloatingActionButton(
-            heroTag: "sos_btn",
-            backgroundColor: Colors.red.shade600,
-            foregroundColor: Colors.white,
-            onPressed: () async => await FirebaseAuth.instance.signOut(),
-            child: const Icon(Icons.sos, size: 32),
           ),
           const SizedBox(height: 12),
           FloatingActionButton(
