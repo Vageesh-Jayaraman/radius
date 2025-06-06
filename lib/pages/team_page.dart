@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:radius/pages/auth_service.dart';
 import 'package:radius/pages/team_helper.dart';
 import 'package:radius/pages/team_service.dart';
+import 'package:radius/pages/welcome.dart';
 import 'map_page.dart';
 
 class TeamPage extends StatefulWidget {
@@ -97,7 +98,12 @@ class _TeamPageState extends State<TeamPage> {
 
   void handleSignOut() async {
     await _authService.signOut();
-    if (mounted) Navigator.of(context).popUntil((route) => route.isFirst);
+    if (!mounted) return;
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const WelcomePage()),
+          (route) => false,
+    );
   }
 
   void handleDeleteAccount() async {

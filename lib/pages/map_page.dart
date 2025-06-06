@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:random_avatar/random_avatar.dart';
 import 'realtime_db.dart';
+import 'team_page.dart';
 
 class MapPage extends StatefulWidget {
   final String teamId;
@@ -15,7 +17,7 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   final MapController _mapController = MapController();
   final RealtimeDBService _realtimeDB = RealtimeDBService();
-  late Stream<Map<String, dynamic>> _teamLocationsStream;
+  late Stream<List<UserLocationData>> _teamLocationsStream;
   LatLng? _currentLocation;
   final List<Marker> _markers = [];
 
@@ -34,6 +36,7 @@ class _MapPageState extends State<MapPage> {
         distanceFilter: 10,
       ),
     ).listen((Position position) {
+      if (!mounted) return;
       _realtimeDB.updateUserLocation(
         teamId: widget.teamId,
         latitude: position.latitude,
@@ -54,31 +57,70 @@ class _MapPageState extends State<MapPage> {
     }
 
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    if (!mounted) return;
     setState(() => _currentLocation = LatLng(position.latitude, position.longitude));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<Map<String, dynamic>>(
+      body: StreamBuilder<List<UserLocationData>>(
         stream: _teamLocationsStream,
         builder: (context, snapshot) {
           _markers.clear();
 
           if (snapshot.hasData) {
-            snapshot.data!.forEach((userId, location) {
+            for (var user in snapshot.data!) {
               _markers.add(
                 Marker(
-                  width: 36,
-                  height: 36,
-                  point: LatLng(
-                    (location['latitude'] as num).toDouble(),
-                    (location['longitude'] as num).toDouble(),
+                  width: 60,
+                  height: 80,
+                  point: LatLng(user.latitude, user.longitude),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              title: Text(user.username),
+                              content: SizedBox(
+                                height: 100,
+                                width: 100,
+                                child: RandomAvatar(user.avatarSeed, width: 100, height: 100),
+                              ),
+                            ),
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 20,
+                          backgroundColor: Colors.transparent,
+                          child: ClipOval(
+                            child: SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: RandomAvatar(user.avatarSeed, width: 40, height: 40),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          user.username,
+                          style: const TextStyle(color: Colors.white, fontSize: 10),
+                        ),
+                      ),
+                    ],
                   ),
-                  child: const Icon(Icons.location_on, color: Colors.black, size: 32),
                 ),
               );
-            });
+            }
           }
 
           return FlutterMap(
@@ -89,7 +131,8 @@ class _MapPageState extends State<MapPage> {
             ),
             children: [
               TileLayer(
-                urlTemplate: 'https://tile.jawg.io/jawg-streets/{z}/{x}/{y}.png?access-token=GsQVPAN5Bpmv3rwGFWpEKDjMp0OBtfSrxGFGtrZ5guA4DvlML0X2y0hTtOy12mYR',
+                urlTemplate:
+                'https://tile.jawg.io/jawg-streets/{z}/{x}/{y}.png?access-token=GsQVPAN5Bpmv3rwGFWpEKDjMp0OBtfSrxGFGtrZ5guA4DvlML0X2y0hTtOy12mYR',
                 userAgentPackageName: 'com.example.app',
               ),
               MarkerLayer(
@@ -116,7 +159,13 @@ class _MapPageState extends State<MapPage> {
             heroTag: "exit_btn",
             backgroundColor: Colors.black,
             foregroundColor: Colors.white,
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const TeamPage()),
+                    (route) => false,
+              );
+            },
             child: const Icon(Icons.exit_to_app, size: 28),
           ),
           const SizedBox(height: 12),

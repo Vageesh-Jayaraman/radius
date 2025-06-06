@@ -27,7 +27,7 @@ Widget buildCurrentTeamsSection(dynamic teamService, Function(String) handleDele
   child: Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const Padding(padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8), child: Text('Current Teams', style: TextStyle(fontFamily: 'SF Pro Display', fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black))),
+      const Padding(padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8), child: Text('Teams Created By You', style: TextStyle(fontFamily: 'SF Pro Display', fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black))),
       Expanded(
         child: FutureBuilder<List<String>>(
           future: teamService.getTeamsCreatedByUser(),
