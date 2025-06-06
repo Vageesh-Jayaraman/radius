@@ -125,7 +125,7 @@ void displayInfoDialog(BuildContext context) => showDialog(
   context: context,
   builder: (_) => AlertDialog(
     title: const Text('About Radius', style: TextStyle(fontFamily: 'SF Pro Display', fontWeight: FontWeight.bold)),
-    content: const Text('Radius lets you securely create or join teams and share real-time locations within a group. Teams auto-expire. Simple, fast, and private.', style: TextStyle(fontFamily: 'SF Pro Display')),
+    content: const Text('Radius lets you securely create or join teams and share real-time locations within a group. Simple, fast, and private.', style: TextStyle(fontFamily: 'SF Pro Display')),
     actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK', style: TextStyle(fontFamily: 'SF Pro Display')))],
   ),
 );
