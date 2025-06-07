@@ -14,6 +14,11 @@
 
 ## System Architecture
 
+<div align="center">
+  <img src="design/auth_flow.png" width="600" />
+  <img src="design/data_flow.png" width="600" />
+</div>
+
 
 ---
 
