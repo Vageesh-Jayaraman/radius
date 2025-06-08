@@ -7,6 +7,11 @@ A simple and secure real-time team location tracking app built with Flutter and 
   </a>
 </div>
 
+
+
+
+>[!WARNING]
+>This app currently requires the user to stay inside the app for location updates to work. Background updates are not supported yet — will be added in future updates. 
 ---
 
 ## Built With
