@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -49,16 +50,23 @@ class _MapPageState extends State<MapPage> {
   Future<void> _getUserLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) return;
-
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission != LocationPermission.whileInUse && permission != LocationPermission.always) return;
     }
-
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     if (!mounted) return;
     setState(() => _currentLocation = LatLng(position.latitude, position.longitude));
+  }
+
+  LatLngBounds _calculateBounds(List<LatLng> points) {
+    var latitudes = points.map((p) => p.latitude).toList();
+    var longitudes = points.map((p) => p.longitude).toList();
+    return LatLngBounds(
+      LatLng(latitudes.reduce(min), longitudes.reduce(min)),
+      LatLng(latitudes.reduce(max), longitudes.reduce(max)),
+    );
   }
 
   @override
@@ -68,6 +76,7 @@ class _MapPageState extends State<MapPage> {
         stream: _teamLocationsStream,
         builder: (context, snapshot) {
           _markers.clear();
+          List<LatLng> allPoints = [];
 
           if (snapshot.hasData) {
             for (var user in snapshot.data!) {
@@ -120,7 +129,25 @@ class _MapPageState extends State<MapPage> {
                   ),
                 ),
               );
+              allPoints.add(LatLng(user.latitude, user.longitude));
             }
+          }
+
+          if (_currentLocation != null) {
+            allPoints.add(_currentLocation!);
+          }
+
+          if (allPoints.isNotEmpty) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              final bounds = _calculateBounds(allPoints);
+              _mapController.fitCamera(
+                CameraFit.bounds(
+                  bounds: bounds,
+                  padding: const EdgeInsets.all(40),
+                  maxZoom: 15,
+                ),
+              );
+            });
           }
 
           return FlutterMap(
@@ -179,6 +206,29 @@ class _MapPageState extends State<MapPage> {
               }
             },
             child: const Icon(Icons.my_location, size: 28),
+          ),
+          const SizedBox(height: 12),
+          FloatingActionButton(
+            heroTag: "zoom_btn",
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+            onPressed: () {
+              final allPoints = [
+                ..._markers.map((m) => m.point),
+                if (_currentLocation != null) _currentLocation!,
+              ];
+              if (allPoints.isNotEmpty) {
+                final bounds = _calculateBounds(allPoints);
+                _mapController.fitCamera(
+                  CameraFit.bounds(
+                    bounds: bounds,
+                    padding: const EdgeInsets.all(40),
+                    maxZoom: 15,
+                  ),
+                );
+              }
+            },
+            child: const Icon(Icons.zoom_out_map, size: 28),
           ),
         ],
       ),

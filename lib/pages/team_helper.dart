@@ -6,7 +6,7 @@ PreferredSizeWidget buildAppBar(BuildContext context, VoidCallback onInfoPressed
   backgroundColor: Colors.black,
   elevation: 0,
   title: const Text('Radius', style: TextStyle(fontFamily: 'SF Pro Display', fontWeight: FontWeight.bold, fontSize: 26, color: Colors.white)),
-  actions: [IconButton(icon: const Icon(Icons.info_outline, color: Colors.black), onPressed: onInfoPressed)],
+  actions: [IconButton(icon: const Icon(Icons.info_outline, color: Colors.white), onPressed: onInfoPressed)],
 );
 
 Widget buildProfileHeader(String? avatarSeed, String? username) => Padding(
@@ -18,7 +18,7 @@ Widget buildProfileHeader(String? avatarSeed, String? username) => Padding(
       else
         const CircleAvatar(radius: 20, backgroundColor: Colors.grey, child: Icon(Icons.person, size: 20, color: Colors.white)),
       const SizedBox(width: 16),
-      Text("Hi " + username! ?? '', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+      Text("Hi ${username!}" ?? '', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
     ],
   ),
 );
