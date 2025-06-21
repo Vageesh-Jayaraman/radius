@@ -44,3 +44,34 @@ A simple and secure real-time team location tracking app built with Flutter and 
 
 ---
 
+<div align="center" style="background-color: #f0f0f0; padding: 16px; border-radius: 8px;">
+
+<p><em>Just an implementation of</em></p>
+
+<a href="https://github.com/KavinKarthik18/Tripit">
+  <img src="https://img.shields.io/badge/TRIPIT-black?style=for-the-badge" alt="Tripit Repo" />
+</a>
+
+<p><em>which won the 2nd runner-up position in <strong>Codevolt (organised by Raptee.hv and Zoho)</strong> and was ideated and built by</em></p>
+
+<div>
+  <a href="https://github.com/KavinKarthik18" target="_blank">
+    <img src="https://github.com/KavinKarthik18.png" width="40" height="40" style="border-radius: 50%;" />
+  </a>
+  <a href="https://github.com/Akkilesh-A" target="_blank">
+    <img src="https://github.com/Akkilesh-A.png" width="40" height="40" style="border-radius: 50%;" />
+  </a>
+  <a href="https://github.com/Nanthan-s-Nair" target="_blank">
+    <img src="https://github.com/Nanthan-s-Nair.png" width="40" height="40" style="border-radius: 50%;" />
+  </a>
+  <a href="https://github.com/AravindXD" target="_blank">
+    <img src="https://github.com/AravindXD.png" width="40" height="40" style="border-radius: 50%;" />
+  </a>
+  <a href="https://github.com/vageesh-jayaraman" target="_blank">
+    <img src="https://github.com/vageesh-jayaraman.png" width="40" height="40" style="border-radius: 50%;" />
+  </a>
+</div>
+
+</div>
+
+
